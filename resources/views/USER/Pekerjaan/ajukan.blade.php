@@ -2,6 +2,28 @@
     <x-layout>
         <x-slot:tittle>{{ $tittle }}</x-slot:tittle>
         <x-slot:nama>{{ auth()->user()->nama_lengkap }}</x-slot:nama>
+        <x-slot:hitung>
+            {{ $blmdibaca }}
+        </x-slot:hitung>
+        <x-slot:notifikasi>
+            @foreach ($notifikasi as $notif)
+            <a class="dropdown-item d-flex align-items-center" href="#">
+                <div class="mr-3">
+                    <div class="icon-circle bg-primary">
+                        <i class="fas fa-file-alt text-white"></i>
+                    </div>
+                </div>
+                <div>
+                    <div class="small text-gray-500">
+                        {{ $notif->tanggal_dibuat }}
+                    </div>
+                    <span class="font-weight-bold">
+                        {{ $notif->pesan }}
+                    </span>
+                </div>
+            </a>
+            @endforeach
+        </x-slot:notifikasi>
 
         <h1 class="h3 mb-2 text-gray-800">Mengajukan Pekerjaan</h1>
 

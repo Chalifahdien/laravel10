@@ -23,19 +23,23 @@ Route::post('/register', [RegisterController::class, 'store']);
 
 
 Route::get('/', [UserController::class, 'index'])->name('beranda')->middleware('auth', 'checkrole:2');
+Route::get('/profil', [UserController::class, 'profil'])->middleware('auth', 'checkrole:2');
 Route::get('/ajukan', [PekerjaanController::class, 'ajukan'])->middleware('auth', 'checkrole:2');
 Route::post('/ajukan', [PekerjaanController::class, 'store']);
 Route::get('/ambil', [UserController::class, 'ambil'])->middleware('auth', 'checkrole:2');
 Route::get('/ambil/{pekerjaan:id_pekerjaan}', [UserController::class, 'detailPekerjaan'])->middleware('auth', 'checkrole:2');
 Route::put('/pekerjaan/{id_pekerjaan}/ambil', [UserController::class, 'ambilPekerjaan'])->name('pekerjaan.ambil');
 Route::put('/pekerjaan/{id_pekerjaan}/selesai', [UserController::class, 'selesaiPekerjaan'])->name('pekerjaan.selesai');
+Route::put('/pekerjaan/{id_pekerjaan}/ajukan', [UserController::class, 'ajukankembali'])->name('pekerjaan.ajukan');
+Route::put('/pekerjaan/{id_pekerjaan}/hapus', [UserController::class, 'hapusPekerjaan'])->name('pekerjaan.hapus');
+Route::post('/pekerjaan/{id_pekerjaan}/komentar', [PekerjaanController::class, 'komentarPekerjaan'])->name('pekerjaan.komentar');
 Route::get('/pengguna/{pengguna:id_pengguna}', [UserController::class, 'pekerjaanUser'])->middleware('auth', 'checkrole:2');
 
 
 // ----------------------Admin-------------------------//
 
 
-Route::get('/admin', [AdminController::class, 'dashboard'])->middleware('auth', 'checkrole:1');
+Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin')->middleware('auth', 'checkrole:1');
 Route::get('/user', [AdminController::class, 'users'])->middleware('auth', 'checkrole:1');
 Route::get('/request', [AdminController::class, 'request'])->name('request')->middleware('auth', 'checkrole:1');
 Route::put('/pekerjaan/{id_pekerjaan}/accept', [AdminController::class, 'accept'])->name('pekerjaan.accept');

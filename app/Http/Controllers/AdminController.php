@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Pekerjaan;
+use App\Models\Notifikasi;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -75,6 +76,13 @@ class AdminController extends Controller
         $pekerjaan->id_status = 3; 
         $pekerjaan->save();
 
+        Notifikasi::create([
+            'id_pengguna' => $pekerjaan->id_pengguna, // Assuming this is the user who owns the job
+            'pesan' => 'Pekerjaan ' . $pekerjaan->judul . ' telah diterima',
+            'telah_dibaca' => false,
+            'tanggal_dibuat' => now(),
+        ]);
+
         return redirect()->route('request', $pekerjaan->id_pekerjaan)->with('success', 'Pekerjaan diterima');
     }
 
@@ -83,6 +91,13 @@ class AdminController extends Controller
         $pekerjaan = Pekerjaan::findOrFail($id_pekerjaan);
         $pekerjaan->id_status = 5; 
         $pekerjaan->save();
+
+        Notifikasi::create([
+            'id_pengguna' => $pekerjaan->id_pengguna, // Assuming this is the user who owns the job
+            'pesan' => 'Pekerjaan ' . $pekerjaan->judul . ' telah ditolak',
+            'telah_dibaca' => false,
+            'tanggal_dibuat' => now(),
+        ]);
 
         return redirect()->route('request')->with('tolak', 'Pekerjaan Dibatalkan');
     }

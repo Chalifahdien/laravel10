@@ -65,7 +65,7 @@
 
                                 <div class="text-center">
                                     @if (in_array($extension, ['jpeg', 'png', 'jpg', 'gif', 'svg']))
-                                        <img class="img-fluid rounded" src="{{ asset($filePath) }}" style="width: 250px"
+                                        <img class="img-fluid rounded" src="//{{ asset($filePath) }}" style="width: 250px"
                                             alt="Lampiran">
                                     @elseif ($extension == 'pdf')
                                         <a class="btn btn-outline-danger" href="{{ asset($filePath) }}"

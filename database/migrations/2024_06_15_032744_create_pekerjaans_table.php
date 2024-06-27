@@ -19,9 +19,9 @@ return new class extends Migration {
             $table->unsignedBigInteger('id_status');
             $table->timestamp('tanggal_dibuat')->useCurrent();
             $table->timestamp('tanggal_diperbarui')->useCurrent()->useCurrentOnUpdate();
-            $table->foreign('id_pengguna')->references('id_pengguna')->on('users');
-            $table->foreign('id_status')->references('id_status')->on('status_pekerjaan');
-            $table->foreign('id_pengambil')->references('id_pengguna')->on('users');
+            $table->foreign('id_pengguna')->references('id_pengguna')->on('users')->onDelete('cascade');
+            $table->foreign('id_status')->references('id_status')->on('status_pekerjaan')->onDelete('cascade');
+            $table->foreign('id_pengambil')->references('id_pengguna')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -25,7 +25,7 @@ class LoginController extends Controller
             if (Auth::user()->id_peran == 1) 
             {
                 $request->session()->regenerate();
-                return redirect()->intended('/admin');
+                return redirect()->route('admin');
             } 
             else if (Auth::user()->id_peran == 2) 
             {

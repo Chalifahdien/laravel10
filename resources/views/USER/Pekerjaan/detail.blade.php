@@ -2,6 +2,28 @@
     <x-layout>
         <x-slot:tittle>{{ $tittle }}</x-slot:tittle>
         <x-slot:nama>{{ auth()->user()->nama_lengkap }}</x-slot:nama>
+        <x-slot:hitung>
+            {{ $blmdibaca }}
+        </x-slot:hitung>
+        <x-slot:notifikasi>
+            @foreach ($notifikasi as $notif)
+                <a class="dropdown-item d-flex align-items-center" href="#">
+                    <div class="mr-3">
+                        <div class="icon-circle bg-primary">
+                            <i class="fas fa-file-alt text-white"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="small text-gray-500">
+                            {{ $notif->tanggal_dibuat }}
+                        </div>
+                        <span class="font-weight-bold">
+                            {{ $notif->pesan }}
+                        </span>
+                    </div>
+                </a>
+            @endforeach
+        </x-slot:notifikasi>
         <!-- Page Heading -->
         <div class="d-flex align-items-center justify-content-between">
             <h1 class="h3 text-gray-800">Detail Pekerjaan</h1>
@@ -26,11 +48,31 @@
                         </svg>Back
                     </a>
                 @endif
+                @if ($pekerjaan['id_status'] == 1)
+                    <a href="/" class="badge badge-warning">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-arrow-left" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
+                        </svg>Back
+                    </a>
+                @endif
+                @if ($pekerjaan['id_status'] == 5)
+                    <a href="/" class="badge badge-warning">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-arrow-left" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
+                        </svg>Back
+                    </a>
+                @endif
             </h5>
         </div>
         <div class="card shadow mb-4">
             <div class="card-body">
-                
+
                 @if (session()->has('ambil'))
                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
                         {{ session('ambil') }}
@@ -78,8 +120,8 @@
 
                                     <div class="text-center">
                                         @if (in_array($extension, ['jpeg', 'png', 'jpg', 'gif', 'svg']))
-                                            <img class="img-fluid rounded" src="{{ asset($filePath) }}" style="width: 250px"
-                                                alt="Lampiran">
+                                            <img class="img-fluid rounded" src="{{ asset($filePath) }}"
+                                                style="width: 250px" alt="Lampiran">
                                         @elseif ($extension == 'pdf')
                                             <a class="btn btn-outline-danger" href="{{ asset($filePath) }}"
                                                 target="_blank"><svg xmlns="http://www.w3.org/2000/svg" width="16"
@@ -111,19 +153,40 @@
                                 @endif
                                 <hr>
                                 @if ($pekerjaan['id_status'] == 3)
-                                    <form action="{{ route('pekerjaan.ambil', $pekerjaan->id_pekerjaan) }}" method="post">
+                                    <form action="{{ route('pekerjaan.ambil', $pekerjaan->id_pekerjaan) }}"
+                                        method="post">
                                         @csrf
                                         @method('PUT')
-                                        <button class="btn btn-danger btn-user btn-block" type="submit">
+                                        <button class="btn btn-primary btn-user btn-block" type="submit">
                                             Ambil Pekerjaan
                                         </button>
                                     </form>
                                 @elseif ($pekerjaan['id_status'] == 2)
-                                    <form action="{{ route('pekerjaan.selesai', $pekerjaan->id_pekerjaan) }}" method="post">
+                                    <form action="{{ route('pekerjaan.selesai', $pekerjaan->id_pekerjaan) }}"
+                                        method="post">
                                         @csrf
                                         @method('PUT')
                                         <button class="btn btn-success btn-user btn-block" type="submit">
                                             Pekerjaan Selesai
+                                        </button>
+                                    </form>
+                                @elseif ($pekerjaan['id_status'] == 5)
+                                    <form action="{{ route('pekerjaan.ajukan', $pekerjaan->id_pekerjaan) }}"
+                                        method="post">
+                                        @csrf
+                                        @method('PUT')
+                                        <button class="btn btn-primary btn-user btn-block mt-2" type="submit">
+                                            Ajukan Kembali
+                                        </button>
+                                    </form>
+                                @endif
+                                @if ($pekerjaan['id_pengguna'] == auth()->user()->id_pengguna)
+                                    <form action="{{ route('pekerjaan.hapus', $pekerjaan->id_pekerjaan) }}"
+                                        method="post">
+                                        @csrf
+                                        @method('PUT')
+                                        <button class="btn btn-danger btn-user btn-block mt-2" type="submit">
+                                            Hapus Ajuan
                                         </button>
                                     </form>
                                 @endif
@@ -131,6 +194,38 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            {{-- komentar --}}
+            <hr>
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Komenter</h6>
+            </div>
+            <div class="card-body">
+                <form action="{{ route('pekerjaan.komentar', $pekerjaan->id_pekerjaan) }}" method="post">
+                    @csrf
+                    <div class="input-group mb-3">
+                        <input class="form-control" name="komentar" id="komentar" type="text"
+                            placeholder="Komentar... " required />
+                        <button class="btn btn-primary" type="submit" id="button-addon2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-send" viewBox="0 0 16 16">
+                                <path
+                                    d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z" />
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+                @foreach ($komentar as $komen)
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            {{ $komen->pengguna->nama_lengkap }} | {{ $komen->created_at->diffForHumans() }}
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text"> {{ $komen->teks_komentar }} </p>
+                        </div>
+                    </div>
+                @endforeach
+
             </div>
         </div>
     </x-layout>

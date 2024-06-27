@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Komentar;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Pekerjaan extends Model
 {
@@ -26,5 +28,9 @@ class Pekerjaan extends Model
     public function status()
     {
         return $this->belongsTo(StatusPekerjaan::class, 'id_status');
+    }
+    public function komentar(): HasMany
+    {
+        return $this->hasMany(Komentar::class, 'id_pekerjaan');
     }
 }
